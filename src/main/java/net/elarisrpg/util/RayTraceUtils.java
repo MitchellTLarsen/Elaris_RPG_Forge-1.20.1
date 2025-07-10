@@ -35,7 +35,6 @@ public class RayTraceUtils {
         double closestDistanceSq = distance * distance;
 
         for (Entity entity : entities) {
-            // Only consider entities we care about
             if (!(entity instanceof LivingEntity || entity instanceof ItemEntity)) {
                 continue;
             }
@@ -57,5 +56,25 @@ public class RayTraceUtils {
         }
 
         return null;
+    }
+
+    /**
+     * Traces entities but respects blocks. Only returns an entity
+     * if no solid block is in the way.
+     *
+     * @param player   The player
+     * @param distance Max trace distance
+     * @return EntityHitResult or null
+     */
+    public static EntityHitResult rayTraceEntitiesRespectingBlocks(Player player, double distance) {
+        // Trace blocks first
+        HitResult blockHit = player.pick(distance, 0.0F, false);
+
+        if (blockHit.getType() == HitResult.Type.BLOCK) {
+            return null;
+        }
+
+        // No block in the way, trace entities
+        return rayTraceEntities(player, distance);
     }
 }

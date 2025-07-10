@@ -3,6 +3,7 @@ package net.elarisrpg.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.elarisrpg.capability.PlayerStatsHelper;
+import net.elarisrpg.classsystem.PlayerClass;
 import net.elarisrpg.network.PlayerStatsSyncPacket;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -58,25 +59,31 @@ public class StatsCommand {
                                 )
                         )
                         .then(Commands.literal("reset")
-                        .executes(context -> {
-                            ServerPlayer player = context.getSource().getPlayerOrException();
+                                .executes(context -> {
+                                    ServerPlayer player = context.getSource().getPlayerOrException();
 
-                            PlayerStatsHelper.playerStatsHelper.get(player).ifPresent(stats -> {
-                                stats.setXp(0);
-                                stats.setLevel(1);
-                                stats.setSkillPoints(0);
+                                    PlayerStatsHelper.playerStatsHelper.get(player).ifPresent(stats -> {
+                                        stats.setXp(0);
+                                        stats.setLevel(1);
+                                        stats.setSkillPoints(0);
 
-                                // Sync to client
-                                PlayerStatsSyncPacket.sendToClient(player, stats);
-                            });
+                                        player.getCapability(net.elarisrpg.classsystem.PlayerClassCapability.PLAYER_CLASS_CAPABILITY)
+                                                .ifPresent(classCap -> {
+                                                    classCap.setPlayerClass(PlayerClass.NONE);
 
-                            context.getSource().sendSuccess(
-                                    () -> Component.literal("Player stats have been reset to default."),
-                                    false
-                            );
+                                                    // Sync to client
+                                                    PlayerStatsSyncPacket.sendToClient(player, stats, PlayerClass.NONE);
+                                                });
+                                    });
 
-                            return 1;
-                        })
-                ));
+                                    context.getSource().sendSuccess(
+                                            () -> Component.literal("Player stats have been reset to default."),
+                                            false
+                                    );
+
+                                    return 1;
+                                })
+                        )
+                );
     }
 }

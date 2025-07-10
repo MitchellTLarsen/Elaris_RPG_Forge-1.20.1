@@ -1,5 +1,6 @@
 package net.elarisrpg;
 
+import net.elarisrpg.command.ClassCommand;
 import net.elarisrpg.command.StatsCommand;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -11,5 +12,6 @@ public class ModEventHandler {
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         StatsCommand.register(event.getDispatcher());
+        ClassCommand.register(event.getDispatcher());
     }
 }
