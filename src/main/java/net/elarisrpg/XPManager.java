@@ -2,6 +2,7 @@ package net.elarisrpg;
 
 import net.elarisrpg.capability.IPlayerStats;
 import net.elarisrpg.capability.ModCapabilities;
+import net.elarisrpg.classsystem.PlayerClass;
 import net.elarisrpg.network.PlayerStatsSyncPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.chat.Component;
@@ -39,8 +40,12 @@ public class XPManager {
             stats.setLevel(currentLevel + 1);
             stats.setSkillPoints(stats.getSkillPoints() + 1);
 
-            // Sync to client
-            PlayerStatsSyncPacket.sendToClient(player, stats);
+            player.getCapability(net.elarisrpg.classsystem.PlayerClassCapability.PLAYER_CLASS_CAPABILITY)
+                    .ifPresent(classCap -> {
+                        PlayerClass playerClass = classCap.getPlayerClass();
+
+                        PlayerStatsSyncPacket.sendToClient(player, stats, playerClass);
+                    });
 
             currentLevel = stats.getLevel();
             xpRequired = currentLevel * 100;
@@ -50,4 +55,5 @@ public class XPManager {
             ));
         }
     }
+
 }

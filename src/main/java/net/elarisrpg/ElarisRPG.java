@@ -1,6 +1,7 @@
 package net.elarisrpg;
 
 import com.mojang.logging.LogUtils;
+import net.elarisrpg.classsystem.PlayerClassCapability;
 import net.elarisrpg.network.ModNetwork;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -30,6 +31,7 @@ public class ElarisRPG
         MinecraftForge.EVENT_BUS.register(this);
         modEventBus.addListener(this::addCreative);
         ModNetwork.register();
+        MinecraftForge.EVENT_BUS.register(PlayerClassCapability.class);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)

@@ -2,6 +2,7 @@ package net.elarisrpg.events;
 
 import net.elarisrpg.ElarisRPG;
 import net.elarisrpg.capability.*;
+import net.elarisrpg.classsystem.PlayerClassCapability;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -98,11 +99,17 @@ public class PlayerCapabilityEvents {
     @SubscribeEvent
     public static void onPlayerLoggedIn(net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent event) {
         Player player = event.getEntity();
+        // Log Player Stats
         player.getCapability(ModCapabilities.PLAYER_STATS).ifPresent(stats -> {
             System.out.println("Player joined with stats:");
             System.out.println("XP: " + stats.getXp());
             System.out.println("Level: " + stats.getLevel());
             System.out.println("Skill Points: " + stats.getSkillPoints());
+        });
+        // Log Player Class
+        player.getCapability(PlayerClassCapability.PLAYER_CLASS_CAPABILITY).ifPresent(classCap -> {
+            var playerClass = classCap.getPlayerClass();
+            System.out.println("Player Class: " + playerClass.name());
         });
     }
 }
